@@ -1,11 +1,12 @@
 package de.neuefische.studentdbweb.controller;
 
 import de.neuefische.studentdbweb.model.Student;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+import de.neuefische.studentdbweb.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -13,39 +14,25 @@ import java.util.ArrayList;
 
 public class StudentController {
 
-    ArrayList<Student> listOfStudents = new ArrayList<>();
+    private final StudentService service;
 
-    public StudentController() {
-        listOfStudents.add(new Student("Helene", 22, "8"));
-        listOfStudents.add(new Student("Dieter", 31, "34"));
-        listOfStudents.add(new Student("Jürgen", 24, "4"));
-        listOfStudents.add(new Student("Ingeborg", 22, "39"));
-        listOfStudents.add(new Student("Detlev", 30, "65"));
-
+    @Autowired
+    public StudentController(StudentService service) {
+        this.service = service;
     }
 
-    @GetMapping("whatever")
-    public ArrayList<Student> getStudents() {
 
-        return listOfStudents;
-
+    @GetMapping ("showmeall")
+    public List<Student> getStudents() {
+        return service.getStudents();
     }
 
     @PutMapping
-    public Student addAStudent(@RequestBody Student someStudent) {
-        listOfStudents.add(someStudent);
+    public Student addStudent(@RequestBody Student someStudent) {
+        service.addAStudent(someStudent);
         return someStudent;
-    }
-
-    @GetMapping("{id}")
-    public Student showStudentByID(@PathVariable String id) {
-        for (Student hippies : listOfStudents) {
-            if (hippies.getId().equals(id)) {
-                return hippies;
-
-            }
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "student not found");
 
     }
+
+
 }
